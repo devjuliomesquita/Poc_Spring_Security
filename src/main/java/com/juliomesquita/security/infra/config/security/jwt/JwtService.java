@@ -19,7 +19,7 @@ import java.util.function.Function;
 public class JwtService {
 
     @Value("${spring.api.security.token.secret-key}")
-    private static String SECRET_KEY;
+    private String SECRET_KEY;
 
     public String extractUserCpf(String jwt) {
         return this.extractClaim(jwt, Claims::getSubject);

@@ -1,5 +1,6 @@
 package com.juliomesquita.security.infra.config.security.jwt;
 
+import com.juliomesquita.security.infra.entities.User;
 import com.juliomesquita.security.infra.persistence.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -41,11 +44,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userCpf != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userCpf);
             if (this.jwtService.isTokenValid(jwt, userDetails)) {
+                User user = this.userRepository.findByCpf(userDetails.getUsername())
+                        .orElseThrow();
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()
+                                user.getAuthorities()
                         );
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)

@@ -36,23 +36,23 @@ public class User implements UserDetails {
     @Column(name = "user_password")
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id")
     private Profile profile;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(profile.getName()));
+        return List.of(new SimpleGrantedAuthority(this.profile.getName()));
     }
 
     @Override
     public String getUsername() {
-        return cpf;
+        return this.cpf;
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     @Override
