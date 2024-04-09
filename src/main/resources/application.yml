@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    #        Gerar migrations auto
+    #      jakarta:
+    #        persistence:
+    #          schema-generation:
+    #            create-source: metadata
+    #            scripts:
+    #              action: create
+    #              create-target: db_create.sql
+
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  api:
+    security:
+      token:
+        secret-key: ${JWT_SECRET_KEY:8ebf046911545d2adffeccefd7e9fb92c43c98df559a5f6067082acdc84d58a8}
+        expiration: 86400000 # 1 day
+        refresh-token:
+          expiration: 604800000 # 7 days
+      password-encode: ${ENCODE:hUc9gGA8VRywYfwz2WlwRTaphN8cjd5B}
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,https://notapremiadaacreanadevsefazac.lampp-it.com.br,https://notapremiadaacreanahomsefazac.lampp-it.com.br}
+    allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS,PATCH}
+    allowed-headers: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers}
+    exposed-headers: ${CORS_EXPOSED_HEADERS:Authorization,Content-Type,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers}
+    max-age: ${CORS_MAX_AGE:3600}
