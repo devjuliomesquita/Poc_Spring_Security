@@ -7,28 +7,30 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/test1")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-public class Test1Controller {
+public class UserController {
 
     @GetMapping()
-    @PreAuthorize("hasAuthority('TEST1_READ')")
+    @PreAuthorize("hasAuthority('BACKOFFICE_USER_READ')")
     public ResponseEntity<String> get(){
-        return new ResponseEntity<>("Get::test1 controller", HttpStatus.OK);
+        return new ResponseEntity<>("Get::user controller", HttpStatus.OK);
     }
 
     @PostMapping()
-    @PreAuthorize("hasAuthority('TEST1_WRITE')")
+    @PreAuthorize("hasAuthority('BACKOFFICE_USER_WRITE')")
     public String post(){
-        return "Post::test1 controller";
+        return "Post::user controller";
     }
     @PutMapping()
+    @PreAuthorize("hasAuthority('BACKOFFICE_USER_UPDATE')")
     public String put(){
-        return "Put::test1 controller";
+        return "Put::user controller";
     }
 
     @DeleteMapping()
+    @PreAuthorize("hasAuthority('BACKOFFICE_USER_DELETE')")
     public String delete(){
-        return "Delete::test1 controller";
+        return "Delete::user controller";
     }
 }

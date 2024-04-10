@@ -36,10 +36,6 @@ public class SecurityConfiguration {
                 .authenticationProvider(this.authenticationProvider)
                 .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable);
-
-
-
-
         return httpSecurity.build();
     }
 }

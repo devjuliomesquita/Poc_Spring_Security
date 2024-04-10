@@ -6,6 +6,7 @@ import com.juliomesquita.security.infra.entities.Profile;
 import com.juliomesquita.security.infra.persistence.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class ProfileController {
     private final ProfileRepository profileRepository;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('BACKOFFICE_WRITE')")
     public ResponseEntity<Profile> saveProfile(
             @RequestBody ProfileDTO request
     ){
@@ -36,6 +38,7 @@ public class ProfileController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('BACKOFFICE_READ')")
     public ResponseEntity<List<Profile>> getListProfile(
 
     ){
