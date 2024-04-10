@@ -34,6 +34,7 @@ public class Profile implements Serializable {
     private List<User> users;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "permissions")
     private Set<Permission> permissions;
 
     @Override
