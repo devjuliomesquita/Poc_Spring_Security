@@ -36,13 +36,13 @@ public class User implements UserDetails {
     @Column(name = "user_password")
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id")
     private Profile profile;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.profile.getName()));
+        return this.profile.getAuthoraties();
     }
 
     @Override

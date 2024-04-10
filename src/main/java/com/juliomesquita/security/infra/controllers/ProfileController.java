@@ -1,13 +1,16 @@
 package com.juliomesquita.security.infra.controllers;
 
 import com.juliomesquita.security.infra.dtos.ProfileDTO;
+import com.juliomesquita.security.infra.entities.Permission;
 import com.juliomesquita.security.infra.entities.Profile;
 import com.juliomesquita.security.infra.persistence.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -20,11 +23,14 @@ public class ProfileController {
     public ResponseEntity<Profile> saveProfile(
             @RequestBody ProfileDTO request
     ){
+        Set<Permission> permissions = new HashSet<>();
+        permissions.add(request.permission());
         Profile profile = Profile
                 .builder()
                 .id(UUID.randomUUID())
                 .name(request.name())
                 .description(request.description())
+                .permissions(permissions)
                 .build();
         return ResponseEntity.ok(this.profileRepository.save(profile));
     }

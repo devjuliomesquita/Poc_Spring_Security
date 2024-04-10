@@ -2,10 +2,12 @@ package com.juliomesquita.security.infra.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +33,9 @@ public class Profile implements Serializable {
     @OneToMany(mappedBy = "profile")
     private List<User> users;
 
+    @Enumerated(EnumType.STRING)
+    private Set<Permission> permissions;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,5 +47,14 @@ public class Profile implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, users);
+    }
+
+    public List<SimpleGrantedAuthority> getAuthoraties(){
+        List<SimpleGrantedAuthority> permissionsList = new java.util.ArrayList<>(this.getPermissions()
+                .stream()
+                .map(p -> new SimpleGrantedAuthority(p.name()))
+                .toList());
+        permissionsList.add(new SimpleGrantedAuthority("ROLE_" + this.name));
+        return permissionsList;
     }
 }
