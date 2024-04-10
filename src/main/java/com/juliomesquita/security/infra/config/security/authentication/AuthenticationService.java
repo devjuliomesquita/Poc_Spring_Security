@@ -9,6 +9,7 @@ import com.juliomesquita.security.infra.entities.ProfileFactory;
 import com.juliomesquita.security.infra.entities.User;
 import com.juliomesquita.security.infra.persistence.ProfileRepository;
 import com.juliomesquita.security.infra.persistence.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +29,10 @@ public class AuthenticationService {
     private final ProfileRepository profileRepository;
     private final ProfileFactory profileFactory;
 
+    @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
         Profile profile = this.checkProfile(request.cpf());
+
         User user = User
                 .builder()
                 .id(UUID.randomUUID())
@@ -38,6 +41,7 @@ public class AuthenticationService {
                 .email(request.email())
                 .password(this.passwordEncoder.encode(request.password()))
                 .build();
+
         user.setProfile(profile);
         User userSaved = this.userRepository.save(user);
         String jwtToken = this.createToken(userSaved);
@@ -61,9 +65,9 @@ public class AuthenticationService {
         if(cpf.equalsIgnoreCase("60734641346")){
             Optional<Profile> profile = this.profileRepository.findByName("backoffice");
             if(profile.isEmpty()){
-                List<Profile> profiles = this.profileFactory.createProfiles();
-                this.profileRepository.saveAll(profiles);
-                return profiles.stream()
+                List<Profile> profileList = this.profileFactory.createProfiles();
+                List<Profile> profilesSaved = this.profileRepository.saveAll(profileList);
+                return profilesSaved.stream()
                         .filter(p -> p.getName().equals("backoffice"))
                         .findFirst()
                         .orElseThrow();
