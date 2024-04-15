@@ -48,19 +48,6 @@ public class AuthenticationService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public AuthenticationResponse login(AuthenticationRequest login) {
-        this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        login.cpf(),
-                        login.password()
-                )
-        );
-        User userSaved = this.userRepository.findByCpf(login.cpf())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
-        String jwtToken = this.createToken(userSaved);
-        return AuthenticationResponse.builder().token(jwtToken).build();
-    }
-
     private Profile checkProfile(String cpf){
         if(cpf.equalsIgnoreCase("60734641346")){
             Optional<Profile> profile = this.profileRepository.findByName("backoffice");
@@ -85,5 +72,18 @@ public class AuthenticationService {
         extraClaims.put("Permissions", user.getProfile().getAuthoraties());
 
         return this.jwtService.generateToken(extraClaims, user);
+    }
+
+    public AuthenticationResponse login(AuthenticationRequest login) {
+        this.authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        login.cpf(),
+                        login.password()
+                )
+        );
+        User userSaved = this.userRepository.findByCpf(login.cpf())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
+        String jwtToken = this.createToken(userSaved);
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 }
