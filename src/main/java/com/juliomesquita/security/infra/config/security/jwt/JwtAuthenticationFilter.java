@@ -1,5 +1,6 @@
 package com.juliomesquita.security.infra.config.security.jwt;
 
+import com.juliomesquita.security.infra.persistence.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(
@@ -39,7 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         userCpf = this.jwtService.extractUserCpf(jwt);
         if (userCpf != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userCpf);
-            if (this.jwtService.isTokenValid(jwt, userDetails)) {
+            boolean isTokenValid = this.tokenRepository.findByValue(jwt)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+            if (this.jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,

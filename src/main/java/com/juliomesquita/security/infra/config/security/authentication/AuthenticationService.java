@@ -46,6 +46,7 @@ public class AuthenticationService {
         User userSaved = this.userRepository.save(user);
         String jwtToken = this.createToken(userSaved);
         Token token = this.tokenFactory.createToken(userSaved, jwtToken);
+        this.revokeTokens(userSaved);
         this.tokenRepository.save(token);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
@@ -61,10 +62,22 @@ public class AuthenticationService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
         String jwtToken = this.createToken(userSaved);
         Token token = this.tokenFactory.createToken(userSaved, jwtToken);
+        this.revokeTokens(userSaved);
         this.tokenRepository.save(token);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
+    private void revokeTokens(User user){
+        List<Token> tokenList = this.tokenRepository.findByUserIdAndExpiredFalseAndRevokedFalse(user.getId());
+        if(tokenList.isEmpty()){
+            return;
+        }
+        tokenList.forEach(t -> {
+            t.setRevoked(true);
+            t.setExpired(true);
+        });
+        this.tokenRepository.saveAll(tokenList);
+    }
     private Profile checkProfile(String cpf){
         if(cpf.equalsIgnoreCase("60734641346")){
             Optional<Profile> profile = this.profileRepository.findByName("backoffice");
