@@ -21,6 +21,12 @@ public class JwtService {
     @Value("${spring.api.security.token.secret-key}")
     private String SECRET_KEY;
 
+    @Value("${spring.api.security.token.expiration}")
+    private Long ACCESS_EXPIRATION;
+
+    @Value("${spring.api.security.token.refresh-token.expiration}")
+    private Long REFRESH_EXPIRATION;
+
     public String extractUserCpf(String jwt) {
         return this.extractClaim(jwt, Claims::getSubject);
     }
@@ -44,27 +50,42 @@ public class JwtService {
         return Keys.hmacShaKeyFor(decode);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return this.generateToken(new HashMap<>(), userDetails);
+    public String generateAccessToken(UserDetails userDetails) {
+        return this.generateAccessToken(new HashMap<>(), userDetails);
     }
 
-    public String generateToken(
+    public String generateAccessToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails
+    ) {
+        return this.buildToken(extraClaims, userDetails, ACCESS_EXPIRATION);
+    }
+
+    public String generateRefreshToken(
+            UserDetails userDetails
+    ) {
+        return this.buildToken(new HashMap<>(), userDetails, REFRESH_EXPIRATION);
+    }
+
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = this.extractUserCpf(token);
+        return (username.equals(userDetails.getUsername())) && !this.isTokenExpired(token);
+    }
+
+    private String buildToken(
+            Map<String, Object> extraClaims,
+            UserDetails userDetails,
+            long expiration
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = this.extractUserCpf(token);
-        return (username.equals(userDetails.getUsername())) && !this.isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

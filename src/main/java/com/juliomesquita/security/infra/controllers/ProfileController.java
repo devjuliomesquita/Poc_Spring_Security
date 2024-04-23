@@ -1,7 +1,7 @@
 package com.juliomesquita.security.infra.controllers;
 
 import com.juliomesquita.security.infra.dtos.ProfileDTO;
-import com.juliomesquita.security.infra.entities.Permission;
+import com.juliomesquita.security.infra.entities.enums.Permission;
 import com.juliomesquita.security.infra.entities.Profile;
 import com.juliomesquita.security.infra.persistence.ProfileRepository;
 import lombok.RequiredArgsConstructor;

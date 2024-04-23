@@ -1,5 +1,7 @@
-package com.juliomesquita.security.infra.entities;
+package com.juliomesquita.security.infra.entities.factories;
 
+import com.juliomesquita.security.infra.entities.Profile;
+import com.juliomesquita.security.infra.entities.enums.Permission;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

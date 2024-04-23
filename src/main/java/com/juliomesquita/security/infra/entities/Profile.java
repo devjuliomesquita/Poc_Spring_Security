@@ -1,5 +1,6 @@
 package com.juliomesquita.security.infra.entities;
 
+import com.juliomesquita.security.infra.entities.enums.Permission;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

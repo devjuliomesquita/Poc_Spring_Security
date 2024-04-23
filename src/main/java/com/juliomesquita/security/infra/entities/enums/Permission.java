@@ -1,4 +1,4 @@
-package com.juliomesquita.security.infra.entities;
+package com.juliomesquita.security.infra.entities.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
