@@ -46,9 +46,10 @@ public class AuthenticationService {
         User userSaved = this.userRepository.save(user);
         String jwtToken = this.createToken(userSaved);
         Token token = this.tokenFactory.createToken(userSaved, jwtToken);
+        String refreshToken = this.jwtService.generateRefreshToken(userSaved);
         this.revokeTokens(userSaved);
         this.tokenRepository.save(token);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken).build();
     }
 
     public AuthenticationResponse login(AuthenticationRequest login) {
@@ -62,9 +63,10 @@ public class AuthenticationService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
         String jwtToken = this.createToken(userSaved);
         Token token = this.tokenFactory.createToken(userSaved, jwtToken);
+        String refreshToken = this.jwtService.generateRefreshToken(userSaved);
         this.revokeTokens(userSaved);
         this.tokenRepository.save(token);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().token(jwtToken).refreshToken(refreshToken).build();
     }
 
     private void revokeTokens(User user){
